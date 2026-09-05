@@ -11,6 +11,6 @@ http.createServer((req,res)=>{
   const url=new URL(req.url,'http://localhost');
   if(url.pathname==='/api/data'&&req.method==='GET')return json(res,200,data());
   if(url.pathname==='/api/data'&&req.method==='POST'){let body='';req.on('data',x=>body+=x);req.on('end',()=>{try{let next=JSON.parse(body);if(!Array.isArray(next.foods)||!Array.isArray(next.orders))throw Error();fs.writeFileSync(store,JSON.stringify(next,null,2));json(res,200,{ok:true})}catch{json(res,400,{ok:false})}});return}
-  if(url.pathname==='/'||url.pathname==='/nur-aiym-qr-menu.html'){const page=fs.readFileSync(html,'utf8').replace('<head>','<head><script>window.__SERVER_DB__='+JSON.stringify(data()).replace(/</g,'\\u003c')+';</script>');res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(page);return}
+  if(url.pathname==='/'||url.pathname==='/admin'||url.pathname==='/nur-aiym-qr-menu.html'){const page=fs.readFileSync(html,'utf8').replace('<head>','<head><script>window.__SERVER_DB__='+JSON.stringify(data()).replace(/</g,'\\u003c')+';</script>');res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(page);return}
   res.writeHead(404);res.end('Not found');
 }).listen(3000,'0.0.0.0',()=>console.log('НҰР-АЙЫМ QR мәзірі: http://localhost:3000'));
