@@ -20,6 +20,6 @@ function print(job) {
   });
 }
 async function poll() {
-  try { const r = await fetch(base + '/api/print-jobs', { headers: { 'X-Printer-Key': key } }); const body = await r.json(); if (!r.ok) throw Error('Сервер принтер кілтін қабылдамады.'); for (const job of body.jobs) { await print(job); console.log('Басылды:', job.order.number); } } catch (e) { console.error('Басып шығару кезегі:', e.message); }
+  try { const r = await fetch(base + '/api/print-jobs', { headers: { 'X-Printer-Key': key } }); const body = await r.json(); if (!r.ok) throw Error('Сервер принтер кілтін қабылдамады.'); for (const job of body.jobs) { await print(job); const ack = await fetch(base + '/api/print-jobs/' + encodeURIComponent(job.id) + '/ack', { method: 'POST', headers: { 'X-Printer-Key': key } }); if (!ack.ok) throw Error('Чек басылды, бірақ сервер растауды қабылдамады. Ол 1 минуттан кейін қайта жіберіледі.'); console.log('Басылды:', job.order.number); } } catch (e) { console.error('Басып шығару кезегі:', e.message); }
 }
 poll(); setInterval(poll, 2000);
